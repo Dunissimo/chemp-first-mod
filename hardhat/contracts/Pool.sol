@@ -22,10 +22,10 @@ contract Pool {
     function swap(address tokenIn, address tokenOut, uint256 amount) external {
         require(isTokenInPool(tokenIn), "TokenIn is not valid");
         require(isTokenInPool(tokenOut), "TokenOut is not valid");
-        require(amount > 0, "Amount is not valid");
+        // require(amount > 0, "Amount is not valid");
 
         uint256 amountOut = amount * (reserves[tokenIn] / reserves[tokenOut]);
-        require(amountOut > 0, "AmountOut is not valid");
+        // require(amountOut > 0, "AmountOut is not valid");
 
         uint256 allowance = IERC20(tokenIn).allowance(msg.sender, address(this));
         
