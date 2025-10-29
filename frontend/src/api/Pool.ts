@@ -22,6 +22,12 @@ export class PoolApi extends BaseApi<Pool> {
     async getSecondToken() {
         return this.contract.secondToken();
     }
+    async getFirstTokenReserves() {
+        return this.contract.firstTokenReserves();
+    }
+    async getSecondTokenReserves() {
+        return this.contract.secondTokenReserves();
+    }
 
     async swap(tokenIn: string, tokenOut: string, amount: BigNumberish) {
         return this.contract.swap(tokenIn, tokenOut, amount);

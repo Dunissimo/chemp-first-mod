@@ -19,6 +19,14 @@ contract Pool {
         secondToken = _secondToken;
     }
 
+    function firstTokenReserves() external view returns (uint256) {
+        return reserves[firstToken];
+    }
+    
+    function secondTokenReserves() external view returns (uint256) {
+        return reserves[secondToken];
+    }
+
     function swap(address tokenIn, address tokenOut, uint256 amount) external {
         require(isTokenInPool(tokenIn), "TokenIn is not valid");
         require(isTokenInPool(tokenOut), "TokenOut is not valid");

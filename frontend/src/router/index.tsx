@@ -5,6 +5,8 @@ import Profile from "../pages/Profile";
 import Pool from "../pages/Pool";
 import Stacking from "../pages/Stacking";
 import Info from "../pages/Info";
+import AuthGuard from "../components/AuthGuard";
+import CreatePool from "../pages/CreatePool";
 
 export const routes = [
     {
@@ -13,22 +15,27 @@ export const routes = [
             {
                 id: 'index',
                 path: '/',
-                element: <Pools />,
+                element: <Pools />
             },
             {
                 id: 'pool',
                 path: '/pool/:id',
-                element: <Pool />
+                element: <AuthGuard><Pool /></AuthGuard>
+            },
+            {
+                id: 'craete-pool',
+                path: '/pool/create',
+                element: <AuthGuard><CreatePool /></AuthGuard>
             },
             {
                 id: 'stacking',
                 path: '/stacking',
-                element: <Stacking />
+                element: <AuthGuard><Stacking /></AuthGuard>
             },
             {
                 id: 'profile',
                 path: '/profile',
-                element: <Profile />
+                element: <AuthGuard><Profile /></AuthGuard>
             },
             {
                 id: 'info',

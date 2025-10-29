@@ -1,30 +1,12 @@
-import { ethers, type JsonRpcSigner } from "ethers";
-import { useState } from "react";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 export const useAuth = () => {
-    const [signer, setSigner] = useState<JsonRpcSigner | null>(null);
-    const [isAuthLoading, setIsAuthLoading] = useState<boolean>(false);
+    const context = useContext(AuthContext);
 
-    const auth = async () => {
-        setIsAuthLoading(true);
-
-        if (!window.ethereum) {
-            setIsAuthLoading(false);
-
-            return alert("Установите метамаск!");
-        }
-
-        try {
-            const provider = new ethers.BrowserProvider(window.ethereum)
-            await provider.send("eth_requestAccounts", [])
-
-            const signerTemp = await provider.getSigner()
-            setSigner(signerTemp);
-        } catch (e) {
-            console.error(`Error in auth func: ${e}`)
-            setIsAuthLoading(false);
-        }
+    if (!context) {
+        throw new Error("Context has to be initialized");
     }
 
-    return {auth, signer, isAuthLoading, isAuth: Boolean(signer)};
-}
+    return context;
+};

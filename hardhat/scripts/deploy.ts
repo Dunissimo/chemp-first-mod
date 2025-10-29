@@ -23,6 +23,7 @@ async function deploy() {
         krendelAddress,
         rtkAddress: await rtk.getAddress(),
         profiAddress: await profi.getAddress(),
+        factoryAddress: await factory.getAddress(),
     }
 
     const frontendDir = path.join(__dirname, "../../frontend/src/conf.json");
