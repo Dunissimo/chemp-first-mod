@@ -1,16 +1,11 @@
 import { useEffect, useState } from "react";
-import { useApi } from "../hooks/useApi";
 
-import {gerdaAddress, krendelAddress, rtkAddress, profiAddress} from "../conf.json"
-import { ERC20Api } from "../api/ERC20Api";
 import { formatNumber } from "../utils/helpers";
+import { useCoins } from "../hooks/useCoins";
 
 function Info() {
     const [data, setData] = useState<any>();
-    const gerdaApi = useApi<ERC20Api>(gerdaAddress, ERC20Api);
-    const krendelApi = useApi<ERC20Api>(krendelAddress, ERC20Api);
-    const rtkApi = useApi<ERC20Api>(rtkAddress, ERC20Api);
-    const profiApi = useApi<ERC20Api>(profiAddress, ERC20Api);
+    const {gerdaApi, krendelApi, rtkApi, profiApi} = useCoins();    
 
     useEffect(() => {
         const getData = async () => {

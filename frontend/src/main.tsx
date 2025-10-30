@@ -5,11 +5,14 @@ import { RouterProvider } from 'react-router';
 
 import './index.css';
 import { AuthContextProvider } from './context/AuthContext.tsx';
+import { BalanceContextProvider } from './context/BalanceContext.tsx';
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <AuthContextProvider>
-            <RouterProvider router={router} />
+            <BalanceContextProvider>
+                <RouterProvider router={router} />
+            </BalanceContextProvider>
         </AuthContextProvider>
     </StrictMode>,
 );

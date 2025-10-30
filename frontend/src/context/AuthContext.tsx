@@ -28,9 +28,6 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
 
             const _signer = await provider.getSigner();
             setSigner(_signer);
-
-            console.log(_signer);
-            
         } catch (e) {
             console.error(`Error in auth func: ${e}`);
         } finally {

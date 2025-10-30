@@ -1,8 +1,13 @@
 import { NavLink, Outlet } from "react-router";
 import { useAuth } from "./hooks/useAuth";
+import { useBalance } from "./hooks/useBalance";
+import { useEffect, useState } from "react";
 
 function App() {
     const {signer, isAuthLoading, signIn} = useAuth();
+    const {balance} = useBalance();
+
+    const [formattedBalance, setFormattedBalance] = useState<string | undefined>(undefined);
 
     const activeClass = (isActive: boolean) => {
         const baseClass = 'nav-link';
@@ -15,7 +20,11 @@ function App() {
             signIn();
         }
     }
-    
+
+    useEffect(() => {
+        setFormattedBalance(Intl.NumberFormat('RU-ru').format(Number(balance)));
+    }, [balance]);
+
     return (
         <div className="app">
             <aside className="aside">
@@ -26,9 +35,6 @@ function App() {
                     {signer && <li>
                         <NavLink to={'/stacking'} className={({isActive}) => activeClass(isActive)}>Stacking</NavLink>
                     </li>}
-                    {signer && <li>
-                        <NavLink to={'/profile'} className={({isActive}) => activeClass(isActive)}>Profile</NavLink>
-                    </li>}
                     <li>
                         <NavLink to={'/info'} className={({isActive}) => activeClass(isActive)}>Info</NavLink>
                     </li>
@@ -37,8 +43,12 @@ function App() {
 
             <div className="sub">
                 <header className="header">
+                    <div>
+                        {signer && <>Balance: {formattedBalance} Eth</>}
+                    </div>
+
                     <button onClick={handleClick}>
-                        {isAuthLoading ? 'Загрузка' : signer ? 'Профиль' : 'Войти'}
+                        {isAuthLoading ? 'Loading...' : signer ? 'Profile' : 'Sign in'}
                     </button>
                 </header>
 

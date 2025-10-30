@@ -10,8 +10,6 @@ export const useApi = <T>(address: string, apiClass: TApi): T | undefined => {
     useEffect(() => {
         if (!window.ethereum) return;
 
-        console.log(signer);
-        
         setApi(new apiClass(address, signer ?? new ethers.BrowserProvider(window.ethereum)) as T);
     }, [signer]);
 

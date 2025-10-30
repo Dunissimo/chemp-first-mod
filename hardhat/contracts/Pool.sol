@@ -12,8 +12,8 @@ contract Pool {
     address public firstToken;
     address public secondToken;
 
-    constructor(address _firstToken, address _secondToken, string memory _name) {
-        owner = msg.sender;
+    constructor(address _firstToken, address _secondToken, string memory _name, address _owner) {
+        owner = _owner;
         name = _name;
         firstToken = _firstToken;
         secondToken = _secondToken;

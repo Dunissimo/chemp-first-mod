@@ -3,11 +3,15 @@ import {factoryAddress} from "../conf.json";
 import { useApi } from "../hooks/useApi";
 import { FactoryApi } from "../api/Factory";
 import { getTokenAddress } from "../utils/helpers";
+import { useAuth } from "../hooks/useAuth";
+import { useBalance } from "../hooks/useBalance";
 
 function CreatePool() {
+    const {signer} = useAuth();
+    const {updateBalance} = useBalance();
     const api = useApi<FactoryApi>(factoryAddress, FactoryApi);
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const formData = new FormData(e.currentTarget);
@@ -16,9 +20,11 @@ function CreatePool() {
         const second = formData.get('secondToken') || "";
         
         try {
-            console.log(getTokenAddress(first.toString()), getTokenAddress(second.toString()), `${first}-${second}`);
+            // here signer is not null 100%
+            // bc page is under AuthGuard
+            await api?.createPool(getTokenAddress(first.toString()), getTokenAddress(second.toString()), `${first}-${second}`, await signer?.getAddress()!);
             
-            // api?.createPool(getTokenAddress(first.toString()), getTokenAddress(second.toString()), `${first}-${second}`);
+            updateBalance();
         } catch (error) {
             console.error(error);
         }
@@ -49,7 +55,7 @@ function CreatePool() {
                     </select>
                 </label>
 
-                <button type="submit">Создать</button>
+                <button type="submit">Create</button>
             </form>
         </div>
     );

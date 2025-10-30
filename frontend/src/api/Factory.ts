@@ -11,8 +11,8 @@ export class FactoryApi extends BaseApi<Factory> {
         super(_address, Factory__factory.connect, signer);
     }
 
-    async createPool(firstToken: string, secondToken: string, name: string) {
-        return this.contract.createPool(firstToken, secondToken, name);
+    async createPool(firstToken: string, secondToken: string, name: string, address: string) {
+        return this.contract.createPool(firstToken, secondToken, name, address);
     }
 
     async getPoolsAddresses() {

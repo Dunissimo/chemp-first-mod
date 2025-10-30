@@ -25,7 +25,8 @@
     padding: 20px 30px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     display: flex;
-    justify-content: end;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .main {
@@ -93,6 +94,7 @@ ul {
 .pools {
     display: flex;
     gap: 16px;
+    flex-wrap: wrap;
 }
 
 .pool {

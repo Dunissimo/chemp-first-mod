@@ -27,7 +27,7 @@ function Pools() {
     return (
         <>
             <div className="add-pool">
-                <NavLink className='button' to={'/pool/create'}>Создать пул</NavLink>
+                <NavLink className='button' to={'/pool/create'}>Create pool</NavLink>
             </div>
 
             <div className="pools">

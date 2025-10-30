@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router";
 import App from "../App";
 import Pools from "../pages/Pools";
-import Profile from "../pages/Profile";
 import Pool from "../pages/Pool";
 import Stacking from "../pages/Stacking";
 import Info from "../pages/Info";
@@ -31,11 +30,6 @@ export const routes = [
                 id: 'stacking',
                 path: '/stacking',
                 element: <AuthGuard><Stacking /></AuthGuard>
-            },
-            {
-                id: 'profile',
-                path: '/profile',
-                element: <AuthGuard><Profile /></AuthGuard>
             },
             {
                 id: 'info',

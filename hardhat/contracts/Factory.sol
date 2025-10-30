@@ -6,8 +6,8 @@ import "./Pool.sol";
 contract Factory {
     address[] private pools;
 
-    function createPool(address firstToken, address secondToken, string memory name) public {
-        Pool pool = new Pool(firstToken, secondToken, name);
+    function createPool(address firstToken, address secondToken, string memory name, address owner) public {
+        Pool pool = new Pool(firstToken, secondToken, name, owner);
         pools.push(address(pool));
     }
 
