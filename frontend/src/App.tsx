@@ -2,12 +2,14 @@ import { NavLink, Outlet } from "react-router";
 import { useAuth } from "./hooks/useAuth";
 import { useBalance } from "./hooks/useBalance";
 import { useEffect, useState } from "react";
+import type { IGetBalanceReturns } from "./utils/types";
+import Balances from "./components/Balances";
 
 function App() {
-    const {signer, isAuthLoading, signIn} = useAuth();
+    const {signer, isAuthLoading, isAuth, connectWallet} = useAuth();
     const {balance} = useBalance();
 
-    const [formattedBalance, setFormattedBalance] = useState<string | undefined>(undefined);
+    const [formattedBalance, setFormattedBalance] = useState<IGetBalanceReturns | undefined>(undefined);
 
     const activeClass = (isActive: boolean) => {
         const baseClass = 'nav-link';
@@ -16,13 +18,19 @@ function App() {
     }
 
     const handleClick = () => {
-        if (!signer) {
-            signIn();
+        if (!signer || !isAuth) {
+            connectWallet();
         }
     }
 
     useEffect(() => {
-        setFormattedBalance(Intl.NumberFormat('RU-ru').format(Number(balance)));
+        if (isAuth && !signer) {
+            connectWallet();
+        }
+    }, [connectWallet, signer, isAuth]);
+
+    useEffect(() => {
+        setFormattedBalance(balance);
     }, [balance]);
 
     return (
@@ -39,16 +47,16 @@ function App() {
                         <NavLink to={'/info'} className={({isActive}) => activeClass(isActive)}>Info</NavLink>
                     </li>
                 </ul>
+
+                <div className="coins">
+                    {signer && <Balances balance={formattedBalance} />}
+                </div>
             </aside>
 
             <div className="sub">
                 <header className="header">
-                    <div>
-                        {signer && <>Balance: {formattedBalance} Eth</>}
-                    </div>
-
                     <button onClick={handleClick}>
-                        {isAuthLoading ? 'Loading...' : signer ? 'Profile' : 'Sign in'}
+                        {isAuthLoading ? 'Loading...' : isAuth ? 'Profile' : 'Sign in'}
                     </button>
                 </header>
 

@@ -1,9 +1,11 @@
 import { createContext, useState, type PropsWithChildren, useEffect } from "react";
 import { getBalance } from "../api/eth";
 import { useAuth } from "../hooks/useAuth";
+import type { IGetBalanceReturns } from "../utils/types";
+import { useCoins } from "../hooks/useCoins";
 
 interface IBalanceContext {
-    balance?: string;
+    balance?: IGetBalanceReturns;
     updateBalance: () => void;
 }
 
@@ -11,12 +13,11 @@ export const BalanceContext = createContext<IBalanceContext | null>(null);
 
 export const BalanceContextProvider = ({ children }: PropsWithChildren) => {
     const {signer} = useAuth();
-    const [balance, setBalance] = useState<string | undefined>(undefined);
+    const {gerdaApi, krendelApi, profiApi, rtkApi} = useCoins()
+    const [balance, setBalance] = useState<IGetBalanceReturns | undefined>(undefined);
 
     const updateBalance = async () => {
-        const newBalance = await getBalance(signer);
-        
-        console.log(newBalance);
+        const newBalance = await getBalance(signer, {gerdaApi, krendelApi, profiApi, rtkApi});
         
         setBalance(newBalance);
     }

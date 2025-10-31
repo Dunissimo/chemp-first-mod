@@ -28,5 +28,19 @@ export interface IPool {
         reserve: BigNumberish;
     };
     name: string;
+}
 
+export interface IGetBalanceReturns {
+    eth: string;
+    gerda: string;
+    krendel: string;
+    rtk: string;
+    profi: string;
+}
+
+export interface IUseCoinsReturns {
+    gerdaApi: ERC20Api | undefined;
+    krendelApi: ERC20Api | undefined;
+    rtkApi: ERC20Api | undefined;
+    profiApi: ERC20Api | undefined;
 }

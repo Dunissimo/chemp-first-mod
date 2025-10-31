@@ -51,6 +51,8 @@ contract Pool {
     
         IERC20(token).transferFrom(msg.sender, address(this), amount);
 
+        // TODO: give user lp tokens for adding liquidity
+
         userLiquid[msg.sender][token] += amount;
         reserves[token] += amount;
     }
@@ -59,6 +61,8 @@ contract Pool {
         require(isTokenInPool(token), "Token is not valid");
         
         IERC20(token).transfer(msg.sender, amount);
+
+        // TODO: take user lp tokens
 
         userLiquid[msg.sender][token] -= amount;
         reserves[token] -= amount;

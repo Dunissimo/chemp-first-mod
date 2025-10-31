@@ -8,10 +8,6 @@ export class StackingApi extends BaseApi<Stacking> {
     constructor(_address: string, signer: SignerOrProvider) {
         super(_address, Stacking__factory.connect, signer);
     }
-
-    async getLpCount() {
-        return this.contract.getLpCount();
-    }
     
     async getLastRewardTime() {
         return this.contract.getLastRewardTime();
