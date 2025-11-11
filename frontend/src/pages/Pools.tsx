@@ -40,7 +40,7 @@ function Pools() {
 
                 {pools.map(pool => {
                     return (
-                        <div className="pool">
+                        <div className="pool" key={pool.name}>
                             <p className="pool-name">{pool.name}</p>
 
                             <div className="pool-reserves">
