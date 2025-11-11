@@ -38,11 +38,11 @@ export class FactoryApi extends BaseApi<Factory> {
             pools.push({
                 firstToken: {
                     address: await pool.getFirstToken(),
-                    reserve: ethers.toNumber(await pool.getFirstTokenReserves()),
+                    reserve: await pool.getFirstTokenReserves(),
                 },
                 secondToken: {
                     address: await pool.getSecondToken(),
-                    reserve: ethers.toNumber(await pool.getSecondTokenReserves()),
+                    reserve: await pool.getSecondTokenReserves(),
                 },
                 name: await pool.getName(),
             });

@@ -32,10 +32,22 @@ export interface IPool {
 
 export interface IGetBalanceReturns {
     eth: string;
-    gerda: string;
-    krendel: string;
-    rtk: string;
-    profi: string;
+    gerda: {
+        units: BigNumberish,
+        decimals: BigNumberish,
+    };
+    krendel: {
+        units: BigNumberish,
+        decimals: BigNumberish,
+    };
+    rtk: {
+        units: BigNumberish,
+        decimals: BigNumberish,
+    };
+    profi: {
+        units: BigNumberish,
+        decimals: BigNumberish,
+    };
 }
 
 export interface IUseCoinsReturns {

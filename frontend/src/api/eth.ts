@@ -6,7 +6,7 @@ export const getBalance = async (signer: JsonRpcSigner | null, coins: IUseCoinsR
     const {gerdaApi, krendelApi, profiApi, rtkApi} = coins;
 
     if (!signer) {
-        console.error("User not authenticated");
+        console.log("User not authenticated");
         return;
     }
 
@@ -26,9 +26,21 @@ export const getBalance = async (signer: JsonRpcSigner | null, coins: IUseCoinsR
 
     return {
         eth: intl.format(Number(eth)),
-        gerda: intl.format(gerda),
-        krendel: intl.format(krendel),
-        rtk: intl.format(rtk),
-        profi: intl.format(profi),
+        gerda: {
+            units: gerda,
+            decimals: await gerdaApi.getDecimals(),
+        },
+        krendel: {
+            units: krendel,
+            decimals: await krendelApi.getDecimals(),
+        },
+        rtk: {
+            units: rtk,
+            decimals: await rtkApi.getDecimals(),
+        },
+        profi: {
+            units: profi,
+            decimals: await profiApi.getDecimals(),
+        },
     };
 }

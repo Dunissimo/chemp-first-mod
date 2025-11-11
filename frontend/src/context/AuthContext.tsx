@@ -1,6 +1,6 @@
 import { BrowserProvider } from "ethers";
 import { type JsonRpcSigner } from "ethers";
-import { createContext, useState, type PropsWithChildren } from "react";
+import { createContext, useState, type PropsWithChildren, useEffect } from "react";
 
 interface IAuthContext {
     signer: JsonRpcSigner | null;
@@ -15,6 +15,7 @@ export const AuthContext = createContext<IAuthContext | null>(null);
 export const AuthContextProvider = ({ children }: PropsWithChildren) => {
     const [signer, setSigner] = useState<JsonRpcSigner | null>(null);
     const [isAuthLoading, setIsAuthLoading] = useState<boolean>(false);
+    const [isAuth, setIsAuth] = useState<boolean>(false);
 
     const connectWallet = async () => {
         try {
@@ -44,8 +45,12 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
         localStorage.setItem('auth', 'false');
     }
 
+    useEffect(() => {
+        setIsAuth(localStorage.getItem('auth') === 'true');
+    }, []);
+
     return (
-        <AuthContext.Provider value={{isAuthLoading, signer, isAuth: localStorage.getItem('auth') === 'true', connectWallet, disconnectWallet }}>
+        <AuthContext.Provider value={{isAuthLoading, signer, isAuth, connectWallet, disconnectWallet }}>
             {children}
         </AuthContext.Provider>
     );

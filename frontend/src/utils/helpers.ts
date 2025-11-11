@@ -1,4 +1,6 @@
+import { formatUnits } from "ethers";
 import {gerdaAddress, krendelAddress, rtkAddress} from "../conf.json";
+import type { BigNumberish } from "ethers";
 
 export const formatNumber = (num: number) => {
     return Intl.NumberFormat('RU-ru').format(num);
@@ -16,4 +18,10 @@ export const getTokenAddress = (name: string) => {
         default:
             throw new Error("Unknown token name");
     }    
+}
+
+export const format = (units?: BigNumberish, decimals?: BigNumberish) => {
+    if (!units || !decimals) return;
+
+    return Intl.NumberFormat('RU-ru').format(Number(formatUnits(units, decimals)));
 }

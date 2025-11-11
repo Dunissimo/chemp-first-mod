@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-
-import { formatNumber } from "../utils/helpers";
 import { useCoins } from "../hooks/useCoins";
+import { format } from "../utils/helpers";
 
 function Info() {
     const [data, setData] = useState<any>();
@@ -41,22 +40,22 @@ function Info() {
             <div className="info-item">
                 <span>Symbol: {data?.gerda?.symbol}</span>
                 <span>decimals: {data?.gerda?.decimals}</span>
-                <span>total supply: {formatNumber(data?.gerda?.totalSupply)}</span>
+                <span>total supply: {format(data?.gerda?.totalSupply, 12)}</span>
             </div>
             <div className="info-item">
                 <span>Symbol: {data?.krendel?.symbol}</span>
                 <span>decimals: {data?.krendel?.decimals}</span>
-                <span>total supply: {formatNumber(data?.krendel?.totalSupply)}</span>
+                <span>total supply: {format(data?.krendel?.totalSupply, 12)}</span>
             </div>
             <div className="info-item">
                 <span>Symbol: {data?.rtk?.symbol}</span>
                 <span>decimals: {data?.rtk?.decimals}</span>
-                <span>total supply: {formatNumber(data?.rtk?.totalSupply)}</span>
+                <span>total supply: {format(data?.rtk?.totalSupply, 12)}</span>
             </div>
             <div className="info-item">
                 <span>Symbol: {data?.profi?.symbol}</span>
                 <span>decimals: {data?.profi?.decimals}</span>
-                <span>total supply: {formatNumber(data?.profi?.totalSupply)}</span>
+                <span>total supply: {format(data?.profi?.totalSupply, 12)}</span>
             </div>
         </div>
     );

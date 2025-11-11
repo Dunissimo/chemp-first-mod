@@ -37,7 +37,7 @@ export class PoolApi extends BaseApi<Pool> {
         return this.contract.addLiquid(token, amount);
     }
 
-    async removeLiquid(token: string, amount: BigNumberish) {
-        return this.contract.removeLiquid(token, amount);
+    async removeLiquid(amount: BigNumberish) {
+        return this.contract.removeLiquid(amount);
     }
 }

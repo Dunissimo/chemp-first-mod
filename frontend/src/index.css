@@ -145,3 +145,9 @@ ul {
     flex-direction: column;
     gap: 12px;
 }
+
+.pools {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}

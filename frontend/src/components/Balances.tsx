@@ -1,4 +1,5 @@
 import type { IGetBalanceReturns } from "../utils/types";
+import { format } from "../utils/helpers";
 
 interface IBalancesProps {
     balance?: IGetBalanceReturns;
@@ -10,10 +11,10 @@ function Balances({ balance }: IBalancesProps) {
     return (
         <>
             <span>Eth: {balance.eth}</span>
-            <span>GERDA: {balance.gerda}</span>
-            <span>KRENDEL: {balance.krendel}</span>
-            <span>RTK: {balance.rtk}</span>
-            <span>PROFI: {balance.profi}</span>
+            <span>GERDA: {format(balance.gerda.units, balance.gerda.decimals)}</span>
+            <span>KRENDEL: {format(balance.krendel.units, balance.krendel.decimals)}</span>
+            <span>RTK: {format(balance.rtk.units, balance.rtk.decimals)}</span>
+            <span>PROFI: {format(balance.profi.units, balance.profi.decimals)}</span>
         </>
     )
 }

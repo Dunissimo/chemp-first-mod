@@ -15,20 +15,22 @@ contract ERC20 is IERC20 {
     string public name;
     uint8 public decimals;
     string public symbol;
+    uint256 public basePrice;
 
-    constructor(uint256 _initialAmount, string memory _tokenName, uint8 _decimalUnits, string  memory _tokenSymbol) {
+    constructor(uint256 _initialAmount, string memory _tokenName, uint8 _decimalUnits, string  memory _tokenSymbol, uint256 _basePrice) {
         owner = msg.sender;
         totalSupply = _initialAmount;
         name = _tokenName;
         decimals = _decimalUnits;
         symbol = _tokenSymbol;
+        basePrice = _basePrice;
     }
 
-    function mint(address recipient, uint amount) public {
+    function mint(address recipient, uint amount) external {
         _mint(recipient, amount);
     }
 
-    function burn(address spender, uint amount) public {
+    function burn(address spender, uint amount) external {
         _burn(spender, amount);
     }
 
@@ -57,8 +59,8 @@ contract ERC20 is IERC20 {
         uint256 _allowance = allowed[from][msg.sender];
 
         require(to != address(0), "Cannot send to zero address");
-        require(balances[from] >= amount, "Token balance is lower than amount");
-        require(_allowance >= amount, "Allowance is lower than amount");
+        // require(balances[from] >= amount, "Token balance is lower than amount");
+        // require(_allowance >= amount, "Allowance is lower than amount");
 
         balances[to] += amount;
         balances[from] -= amount;
@@ -83,5 +85,9 @@ contract ERC20 is IERC20 {
 
     function allowance(address _owner, address spender) external view returns (uint256 remaining) {
         return allowed[_owner][spender];
+    }
+ 
+    function getBasePrice() external view returns (uint256 price) {
+        return basePrice;
     }
 }

@@ -9,22 +9,52 @@ async function deploy() {
     const contractFactory = await ethers.getContractFactory("Factory");
     const contractPool = await ethers.getContractFactory("Pool");
 
-    const gerda = await contract.deploy(0, "GerdaCoin", 12, "GERDA");
+    const gerda = await contract.deploy(0, "GerdaCoin", 12, "GERDA", ethers.parseUnits("1", 12));
     const gerdaAddress = await gerda.getAddress();
-    const krendel = await contract.deploy(0, "KrendelCoin", 12, "KRENDEL");
+    const krendel = await contract.deploy(0, "KrendelCoin", 12, "KRENDEL", ethers.parseUnits("1.5", 12));
     const krendelAddress = await krendel.getAddress();
-    const rtk = await contract.deploy(0, "RTKCoin", 12, "RTK");
+    const rtk = await contract.deploy(0, "RTKCoin", 12, "RTK", ethers.parseUnits("3", 12));
     const rtkAddress = await rtk.getAddress();
-    const profi = await contract.deploy(0, "Professional", 12, "PROFI");
+    const profi = await contract.deploy(0, "Professional", 12, "PROFI", ethers.parseUnits("6", 12));
     const profiAddress = await profi.getAddress();
 
-    await gerda.mint(await Owner.getAddress(), 100000);
-    await krendel.mint(await Owner.getAddress(), 150000);
-    await rtk.mint(await Owner.getAddress(), 300000);
+    await gerda.mint(await Owner.getAddress(), ethers.parseUnits("100000", 12));
+    await krendel.mint(await Owner.getAddress(), ethers.parseUnits("150000", 12));
+    await rtk.mint(await Owner.getAddress(), ethers.parseUnits("300000", 12));
+    
+    await gerda.mint(await Tom.getAddress(), ethers.parseUnits("10000", 12));
+    await krendel.mint(await Tom.getAddress(), ethers.parseUnits("15000", 12));
+    await rtk.mint(await Tom.getAddress(), ethers.parseUnits("30000", 12));
+    
+    await gerda.mint(await Ben.getAddress(), ethers.parseUnits("10000", 12));
+    await krendel.mint(await Ben.getAddress(), ethers.parseUnits("15000", 12));
+    await rtk.mint(await Ben.getAddress(), ethers.parseUnits("30000", 12));
 
     const factory = await contractFactory.deploy(profiAddress);
     await factory.createPool(gerdaAddress, krendelAddress, "GERDA-KRENDEL", await Tom.getAddress());
     await factory.createPool(krendelAddress, rtkAddress, "KRENDEL-RTK", await Ben.getAddress());
+
+    const pools = await factory.getPools();
+    const pool1 = await ethers.getContractAt("Pool", pools[0]);
+    const pool2 = await ethers.getContractAt("Pool", pools[1]);
+
+    await gerda.connect(Tom).approve(pool1.target, ethers.parseUnits("300", 12));
+    await krendel.connect(Tom).approve(pool1.target, ethers.parseUnits("300", 12));
+
+    await krendel.connect(Ben).approve(pool2.target, ethers.parseUnits("1500", 12));
+    await rtk.connect(Ben).approve(pool2.target, ethers.parseUnits("1500", 12));
+
+    await pool1.connect(Tom).addLiquid(
+        ethers.parseUnits("300", 12),
+        ethers.parseUnits("300", 12)
+    );
+      
+    await pool2.connect(Ben).addLiquid(
+        ethers.parseUnits("1500", 12),
+        ethers.parseUnits("1500", 12)
+    );
+
+    // TODO: разобраться с decimals и всем этим
 
     const data = {
         gerdaAddress,

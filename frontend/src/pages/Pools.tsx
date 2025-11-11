@@ -6,6 +6,7 @@ import { FactoryApi } from "../api/Factory";
 import { useAuth } from "../hooks/useAuth";
 import type { IPool } from "../utils/types";
 import { NavLink } from "react-router";
+import { ethers } from "ethers";
 
 function Pools() {
     const {signer} = useAuth();
@@ -27,10 +28,16 @@ function Pools() {
     return (
         <>
             <div className="add-pool">
-                <NavLink className='button' to={'/pool/create'}>Create pool</NavLink>
+                <NavLink className='button' to={'/pool/create'}>Create new pool</NavLink>
             </div>
 
             <div className="pools">
+                <h2>My pools:</h2>
+                
+                <div>Empty</div>
+
+                <h2>All pools:</h2>
+
                 {pools.map(pool => {
                     return (
                         <div className="pool">
@@ -38,11 +45,11 @@ function Pools() {
 
                             <div className="pool-reserves">
                                 <p>
-                                    First token reserve: {pool.firstToken.reserve} <br />
+                                    First token reserve: {ethers.formatUnits(pool.firstToken.reserve, 12)} <br />
                                 </p>
                                 
                                 <p>
-                                    Second token reserve: {pool.secondToken.reserve} <br />
+                                    Second token reserve: {ethers.formatUnits(pool.secondToken.reserve, 12)} <br />
                                 </p>
                             </div>
 
