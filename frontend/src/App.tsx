@@ -6,7 +6,7 @@ import type { IGetBalanceReturns } from "./utils/types";
 import Balances from "./components/Balances";
 
 function App() {
-    const {signer, isAuthLoading, isAuth, connectWallet} = useAuth();
+    const {signer, isAuthLoading, isAuth, connectWallet, disconnectWallet} = useAuth();
     const {balance} = useBalance();
 
     const [formattedBalance, setFormattedBalance] = useState<IGetBalanceReturns | undefined>(undefined);
@@ -20,6 +20,10 @@ function App() {
     const handleClick = () => {
         if (!signer || !isAuth) {
             connectWallet();
+        }
+
+        if (signer && isAuth) {
+            disconnectWallet();
         }
     }
 
@@ -56,7 +60,7 @@ function App() {
             <div className="sub">
                 <header className="header">
                     <button onClick={handleClick}>
-                        {isAuthLoading ? 'Loading...' : isAuth ? 'Profile' : 'Sign in'}
+                        {isAuthLoading ? 'Loading...' : isAuth ? 'Exit' : 'Sign in'}
                     </button>
                 </header>
 

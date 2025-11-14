@@ -17,10 +17,48 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
     const [isAuthLoading, setIsAuthLoading] = useState<boolean>(false);
     const [isAuth, setIsAuth] = useState<boolean>(false);
 
+    const logIn = () => {
+        setIsAuth(true);
+        localStorage.setItem('auth', 'true');
+    }
+    const logOut = () => {
+        setIsAuth(false);
+        setSigner(null);
+        localStorage.setItem('auth', 'false');
+    }
+
+    const handleAccountsChanged = (accounts: string[]) => {
+        
+        if (accounts.length === 0) {
+            console.log("disconnect account");
+            // Пользователь отключил MetaMask или вышел
+            disconnectWallet();
+        } else {
+            console.log("account changed");
+            // Пользователь сменил аккаунт
+            connectWallet();
+        }
+    }
+
+    const handleChainChanged = (_chainId: string) => {
+        console.log("chain changed");
+        window.location.reload();
+    }
+
+    const handleDisconnect = (_error: any) => {
+        console.log("disconnect metamask");
+
+        disconnectWallet();
+    }
+
+    const handleConnect = (info: any) => {
+        console.log("connect metamask", info);
+    };
+
     const connectWallet = async () => {
         try {
             setIsAuthLoading(true);
-
+            
             if (!window.ethereum) {
                 setIsAuthLoading(false);
                 return alert("Отсутствует Metamask!");
@@ -30,7 +68,12 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
             const _signer = await provider.getSigner();
 
             setSigner(_signer);
-            localStorage.setItem('auth', 'true');
+            logIn();
+
+            (window.ethereum as any).on('accountsChanged', handleAccountsChanged);
+            (window.ethereum as any).on('chainChanged', handleChainChanged);
+            (window.ethereum as any).on('connect', handleConnect);
+            (window.ethereum as any).on('disconnect', handleDisconnect);
         } catch (error) {
             console.error('Failed to connect wallet:', error);
         
@@ -41,8 +84,14 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
     }
 
     const disconnectWallet = () => {
-        setSigner(null);
-        localStorage.setItem('auth', 'false');
+        logOut();
+
+        if ((window.ethereum as any)?.removeListener) {
+            (window.ethereum as any).removeListener('accountsChanged', handleAccountsChanged);
+            (window.ethereum as any).removeListener('chainChanged', handleChainChanged);
+            (window.ethereum as any).removeListener('connect', handleConnect);
+            (window.ethereum as any).removeListener('disconnect', handleDisconnect);
+        }
     }
 
     useEffect(() => {

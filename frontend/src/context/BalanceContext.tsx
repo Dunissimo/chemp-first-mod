@@ -12,7 +12,7 @@ interface IBalanceContext {
 export const BalanceContext = createContext<IBalanceContext | null>(null);
 
 export const BalanceContextProvider = ({ children }: PropsWithChildren) => {
-    const {signer} = useAuth();
+    const {signer, isAuth} = useAuth();
     const {gerdaApi, krendelApi, profiApi, rtkApi} = useCoins()
     const [balance, setBalance] = useState<IGetBalanceReturns | undefined>(undefined);
 
@@ -24,7 +24,7 @@ export const BalanceContextProvider = ({ children }: PropsWithChildren) => {
 
     useEffect(() => {
         updateBalance();
-    }, [signer]);
+    }, [signer, isAuth]);
 
     return (
         <BalanceContext.Provider value={{balance, updateBalance}}>

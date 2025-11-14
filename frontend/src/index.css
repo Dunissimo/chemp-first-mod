@@ -93,11 +93,20 @@ ul {
 
 .pools {
     display: flex;
-    gap: 16px;
     flex-wrap: wrap;
+    flex-direction: column;
+    align-items: start;
+    gap: 16px;
+}
+
+.pools-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
 .pool {
+    width: 500px;
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -120,9 +129,104 @@ ul {
     justify-content: space-between;
 }
 
+.pool-controls {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.pool-controls button {
+    width: 50%;
+}
+
+.pool-controls button:hover {
+    opacity: .7;
+}
+
+.pool-controls button:disabled {
+    opacity: .4;
+    pointer-events: none;
+}
+
+.pool-controls button:nth-child(1) {
+    background-color: rgb(1, 99, 1);
+}
+
+.pool-controls button:nth-child(2) {
+    background-color: rgb(221, 0, 0);
+}
+
+.coins {
+    margin-top: 40px;
+    color: #fff;
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.modal:not(.active) {
+    display: none;
+}
+
+.modal__overlay {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .5);
+}
+
+.modal__wrapper {
+    width: 50vw;
+    min-width: 320px;
+    height: 70vh;
+    min-height: 320px;
+    padding: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    border-radius: 10px;
+}
+
+.modal__title {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.modal__body {}
+
+.modal__close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.create-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.create-pool {
+    width: 100%;
+    text-align: center;
+}
+
 .create-pool-form {
-    max-width: 300px;
-    margin-top: 30px;
+    max-width: 450px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -135,19 +239,4 @@ ul {
 
 .create-pool-label select {
     width: 50%;
-}
-
-.coins {
-    margin-top: 40px;
-    color: #fff;
-    font-size: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.pools {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
 }

@@ -12,6 +12,7 @@ contract Pool {
     address public firstToken;
     address public secondToken;
     uint256 public lpTotalSupply;
+    uint256 constant DECIMALS = 1e12;
 
     constructor(address _firstToken, address _secondToken, string memory _name, address _owner, address _lpAddress) {
         owner = _owner;
@@ -54,43 +55,34 @@ contract Pool {
         reserves[tokenOut] -= amountOut;
     }
 
-    function addLiquid(uint256 amountFirst, uint256 amountSecond) external {        
+    // TODO исправить addLiquid, убрать overflow
+    function addLiquid(uint256 amountFirst, uint256 amountSecond) external {
+        _addLiquidFrom(amountFirst, amountSecond, msg.sender);
+    }
+
+    function addLiquidFrom(uint256 amountFirst, uint256 amountSecond, address user) external {
+        _addLiquidFrom(amountFirst, amountSecond, user);
+    }
+
+    function _addLiquidFrom(uint256 amountFirst, uint256 amountSecond, address from) internal {
         require(amountFirst > 0, "Amount of first token not valid");
-        require(amountSecond > 0, "Amount of second token is not valid");
-    
-        IERC20(firstToken).transferFrom(msg.sender, address(this), amountFirst);
-        IERC20(secondToken).transferFrom(msg.sender, address(this), amountSecond);
+        require(amountSecond > 0, "Amount of second token not valid");
 
+        IERC20(firstToken).transferFrom(from, address(this), amountFirst);
+        IERC20(secondToken).transferFrom(from, address(this), amountSecond);
 
-        uint256 priceA = amountFirst * IERC20(firstToken).getBasePrice();
-        uint256 priceB = amountSecond * IERC20(secondToken).getBasePrice();
-        uint256 totalValue = priceA * priceB;
+        uint256 priceA = (amountFirst * IERC20(firstToken).getBasePrice());
+        uint256 priceB = (amountSecond * IERC20(secondToken).getBasePrice());
+        uint256 totalValue = priceA + priceB;
 
-        uint256 lpGained = totalValue / IERC20(lpAddress).getBasePrice();
-
+        uint256 lpGained = (totalValue) / IERC20(lpAddress).getBasePrice();
         require(lpGained > 0, "Insufficient lpGained minted");
 
-        IERC20(lpAddress).mint(msg.sender, lpGained);
+        IERC20(lpAddress).mint(from, lpGained);
+        lpTotalSupply += lpGained;
 
         reserves[firstToken] += amountFirst;
         reserves[secondToken] += amountSecond;
-
-        // if (reserves[firstToken] == 0 || reserves[secondToken] == 0) {
-        //     lpGained = sqrt(amountFirst * amountSecond);
-        // } else {
-        //     uint256 liquidFirst = (amountFirst * lpTotalSupply) / reserves[firstToken]; 
-        //     uint256 liquidSecond = (amountSecond * lpTotalSupply) / reserves[secondToken]; 
-            
-        //     lpGained = min(liquidFirst, liquidSecond);
-        // }
-
-        // require(lpGained > 0, "Insufficient lpGained minted");
-
-        // lpTotalSupply += lpGained;
-        // IERC20(lpAddress).mint(msg.sender, lpGained);
-
-        // reserves[firstToken] += amountFirst;
-        // reserves[secondToken] += amountSecond;
     }
 
     function removeLiquid(uint256 lpAmount) external {

@@ -20,14 +20,20 @@ export type SignerOrProvider = Signer | BrowserProvider | null;
 
 export interface IPool {
     firstToken: {
+        name: string;
         address: string;
         reserve: BigNumberish;
+        price: BigNumberish;
     };
     secondToken: {
+        name: string;
         address: string;
         reserve: BigNumberish;
+        price: BigNumberish;
     };
     name: string;
+    owner: string;
+    address: string;
 }
 
 export interface IGetBalanceReturns {

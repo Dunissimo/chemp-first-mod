@@ -31,30 +31,12 @@ async function deploy() {
     await rtk.mint(await Ben.getAddress(), ethers.parseUnits("30000", 12));
 
     const factory = await contractFactory.deploy(profiAddress);
-    await factory.createPool(gerdaAddress, krendelAddress, "GERDA-KRENDEL", await Tom.getAddress());
-    await factory.createPool(krendelAddress, rtkAddress, "KRENDEL-RTK", await Ben.getAddress());
+        
+    await factory.createPoolWithLiquidity(gerdaAddress, krendelAddress, "GERDA-KRENDEL", await Tom.getAddress(), ethers.parseUnits("2100", 12), ethers.parseUnits("600", 12));
+    await factory.createPoolWithLiquidity(krendelAddress, rtkAddress, "KRENDEL-RTK", await Ben.getAddress(), ethers.parseUnits("1500", 12), ethers.parseUnits("1500", 12));
 
-    const pools = await factory.getPools();
-    const pool1 = await ethers.getContractAt("Pool", pools[0]);
-    const pool2 = await ethers.getContractAt("Pool", pools[1]);
-
-    await gerda.connect(Tom).approve(pool1.target, ethers.parseUnits("300", 12));
-    await krendel.connect(Tom).approve(pool1.target, ethers.parseUnits("300", 12));
-
-    await krendel.connect(Ben).approve(pool2.target, ethers.parseUnits("1500", 12));
-    await rtk.connect(Ben).approve(pool2.target, ethers.parseUnits("1500", 12));
-
-    await pool1.connect(Tom).addLiquid(
-        ethers.parseUnits("300", 12),
-        ethers.parseUnits("300", 12)
-    );
-      
-    await pool2.connect(Ben).addLiquid(
-        ethers.parseUnits("1500", 12),
-        ethers.parseUnits("1500", 12)
-    );
-
-    // TODO: разобраться с decimals и всем этим
+    console.log(await profi.balanceOf(await Tom.getAddress()));
+    console.log(await profi.balanceOf(await Ben.getAddress()));
 
     const data = {
         gerdaAddress,

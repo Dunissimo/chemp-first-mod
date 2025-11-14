@@ -1,12 +1,16 @@
-import {type PropsWithChildren} from 'react';
+import {useEffect, type PropsWithChildren} from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { Navigate } from 'react-router';
 
 function AuthGuard({ children }: PropsWithChildren) {
-    const {signer} = useAuth();
+    const {isAuth} = useAuth();
+
+    useEffect(() => {
+        console.log(isAuth);
+    }, [isAuth]);
 
     return <>
-        {signer ? children : <Navigate to={'/'} />}
+        {isAuth ? children : <Navigate to={'/'} />}
     </>;
 }
 

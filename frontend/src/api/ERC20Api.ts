@@ -24,6 +24,10 @@ export class ERC20Api extends BaseApi<ERC20> {
     async getSymbol() {
         return this.contract.symbol();
     }
+
+    async getBasePrice() {
+        return this.contract.getBasePrice();
+    }
     
     async mint(receipent: string, amount: BigNumberish) {
         return this.contract.mint(receipent, amount);

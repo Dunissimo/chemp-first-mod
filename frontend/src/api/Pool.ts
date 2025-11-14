@@ -12,7 +12,9 @@ export class PoolApi extends BaseApi<Pool> {
     async getOwner() {
         return this.contract.owner();
     }
-    
+    async getAddress() {
+        return this.contract.getAddress();
+    }
     async getName() {
         return this.contract.name();
     }
@@ -33,8 +35,8 @@ export class PoolApi extends BaseApi<Pool> {
         return this.contract.swap(tokenIn, tokenOut, amount);
     }
     
-    async addLiquid(token: string, amount: BigNumberish) {
-        return this.contract.addLiquid(token, amount);
+    async addLiquid(amountFirst: BigNumberish, amountSecond: BigNumberish) {
+        return this.contract.addLiquid(amountFirst, amountSecond);
     }
 
     async removeLiquid(amount: BigNumberish) {

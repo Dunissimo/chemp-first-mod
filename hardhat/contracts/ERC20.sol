@@ -56,15 +56,14 @@ contract ERC20 is IERC20 {
     }
 
     function transferFrom(address from, address to, uint256 amount) external returns (bool success) {
-        uint256 _allowance = allowed[from][msg.sender];
+        // uint256 _allowance = allowed[from][msg.sender];
 
-        require(to != address(0), "Cannot send to zero address");
-        // require(balances[from] >= amount, "Token balance is lower than amount");
+        require(balances[from] >= amount, "Token balance is lower than amount");
         // require(_allowance >= amount, "Allowance is lower than amount");
 
         balances[to] += amount;
         balances[from] -= amount;
-        allowed[from][msg.sender] -= amount;
+        // allowed[from][msg.sender] -= amount;
 
         emit Transfer(from, to, amount);
 

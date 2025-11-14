@@ -1,12 +1,10 @@
 import { formatEther, type JsonRpcSigner } from "ethers";
 import type { IGetBalanceReturns, IUseCoinsReturns } from "../utils/types";
 
-
 export const getBalance = async (signer: JsonRpcSigner | null, coins: IUseCoinsReturns): Promise<IGetBalanceReturns | undefined> => {
     const {gerdaApi, krendelApi, profiApi, rtkApi} = coins;
 
     if (!signer) {
-        console.log("User not authenticated");
         return;
     }
 
