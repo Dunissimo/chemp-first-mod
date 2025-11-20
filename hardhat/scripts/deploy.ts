@@ -7,7 +7,7 @@ async function deploy() {
 
     const contract = await ethers.getContractFactory("ERC20");
     const contractFactory = await ethers.getContractFactory("Factory");
-    const contractPool = await ethers.getContractFactory("Pool");
+    const contractStacking = await ethers.getContractFactory("Stacking");
 
     const gerda = await contract.deploy(0, "GerdaCoin", 12, "GERDA", ethers.parseUnits("1", 12));
     const gerdaAddress = await gerda.getAddress();
@@ -22,21 +22,31 @@ async function deploy() {
     await krendel.mint(await Owner.getAddress(), ethers.parseUnits("150000", 12));
     await rtk.mint(await Owner.getAddress(), ethers.parseUnits("300000", 12));
     
-    await gerda.mint(await Tom.getAddress(), ethers.parseUnits("10000", 12));
-    await krendel.mint(await Tom.getAddress(), ethers.parseUnits("15000", 12));
-    await rtk.mint(await Tom.getAddress(), ethers.parseUnits("30000", 12));
+    await gerda.mint(await Tom.getAddress(), ethers.parseUnits("11500", 12));
+    await krendel.mint(await Tom.getAddress(), ethers.parseUnits("11000", 12));
+    await rtk.mint(await Tom.getAddress(), ethers.parseUnits("10000", 12));
     
     await gerda.mint(await Ben.getAddress(), ethers.parseUnits("10000", 12));
-    await krendel.mint(await Ben.getAddress(), ethers.parseUnits("15000", 12));
-    await rtk.mint(await Ben.getAddress(), ethers.parseUnits("30000", 12));
+    await krendel.mint(await Ben.getAddress(), ethers.parseUnits("13000", 12));
+    await rtk.mint(await Ben.getAddress(), ethers.parseUnits("13000", 12));
 
     const factory = await contractFactory.deploy(profiAddress);
         
-    await factory.createPoolWithLiquidity(gerdaAddress, krendelAddress, "GERDA-KRENDEL", await Tom.getAddress(), ethers.parseUnits("2100", 12), ethers.parseUnits("600", 12));
-    await factory.createPoolWithLiquidity(krendelAddress, rtkAddress, "KRENDEL-RTK", await Ben.getAddress(), ethers.parseUnits("1500", 12), ethers.parseUnits("1500", 12));
+    await factory.createPoolWithLiquidity(gerdaAddress, krendelAddress, "GERDA-KRENDEL", await Tom.getAddress(), ethers.parseUnits("1500", 12), ethers.parseUnits("1000", 12));
+    await factory.createPoolWithLiquidity(krendelAddress, rtkAddress, "KRENDEL-RTK", await Ben.getAddress(), ethers.parseUnits("2000", 12), ethers.parseUnits("1000", 12));
 
-    console.log(await profi.balanceOf(await Tom.getAddress()));
-    console.log(await profi.balanceOf(await Ben.getAddress()));
+    console.log(ethers.formatUnits(await gerda.balanceOf(await Tom.getAddress()), 12));
+    console.log(ethers.formatUnits(await krendel.balanceOf(await Tom.getAddress()), 12));
+    console.log("\n");
+    
+    console.log(ethers.formatUnits(await krendel.balanceOf(await Ben.getAddress()), 12));
+    console.log(ethers.formatUnits(await rtk.balanceOf(await Ben.getAddress()), 12));
+    console.log("\n");
+
+    console.log(ethers.formatUnits(await profi.balanceOf(await Tom.getAddress()), 12));
+    console.log(ethers.formatUnits(await profi.balanceOf(await Ben.getAddress()), 12));
+
+    const stacking = await contractStacking.deploy(profiAddress);
 
     const data = {
         gerdaAddress,
@@ -44,6 +54,7 @@ async function deploy() {
         rtkAddress,
         profiAddress: await profi.getAddress(),
         factoryAddress: await factory.getAddress(),
+        stackingAddress: await stacking.getAddress(),
     }
 
     const frontendDir = path.join(__dirname, "../../frontend/src/conf.json");

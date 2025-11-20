@@ -16,7 +16,7 @@ const config: HardhatUserConfig = {
         {privateKey: accKey3, balance: "30000000000000000000000"},
         {privateKey: accKey4, balance: "10000000000000000000000"}
       ],
-      chainId: 1337,
+      chainId: 1338,
     }
   }
 };

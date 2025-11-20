@@ -12,6 +12,10 @@ export class StackingApi extends BaseApi<Stacking> {
     async getLastRewardTime() {
         return this.contract.getLastRewardTime();
     }
+    
+    async getUserCountLp() {
+        return this.contract.getUserCountLp();
+    }
 
     async stack(amount: BigNumberish) {
         return this.contract.stack(amount);
@@ -23,5 +27,9 @@ export class StackingApi extends BaseApi<Stacking> {
 
     async claimReward() {
         return this.contract.claimReward();
+    }
+
+    async calculateReward() {
+        return this.contract.calculateReward();
     }
 }

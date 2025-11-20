@@ -7,6 +7,7 @@ import type { FormEvent } from "react";
 import { getTokenAddress } from "../utils/helpers";
 import { useAuth } from "../hooks/useAuth";
 import { ethers } from "ethers";
+import { usePools } from "../hooks/usePools";
 
 interface ICreatePoolModalProps {
     createOpen: boolean;
@@ -17,6 +18,7 @@ function CreatePoolModal({ createOpen, closeModal }: ICreatePoolModalProps) {
     const {signer} = useAuth();
     const factoryApi = useApi<FactoryApi>(factoryAddress, FactoryApi);
     const {updateBalance} = useBalance();
+    const {updatePools} = usePools();
     
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -43,6 +45,7 @@ function CreatePoolModal({ createOpen, closeModal }: ICreatePoolModalProps) {
             await tx?.wait();
             
             updateBalance();
+            await updatePools();
             closeModal();
         } catch (error) {
             alert(error);

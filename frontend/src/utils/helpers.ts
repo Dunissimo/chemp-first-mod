@@ -26,15 +26,20 @@ export const format = (units?: BigNumberish, decimals?: BigNumberish) => {
     return Intl.NumberFormat('RU-ru').format(Number(formatUnits(units, decimals)));
 }
 
-export const getRatio = (x: number, y: number): string => {
-    function gcd(x: number, y: number): number {
-        return y === 0 ? x : gcd(y, x % y);
+export const getRatio = (a: number, b: number) => {
+    function gcd(a: number, b: number) {
+        while (b !== 0) {
+            let temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
     }
 
-    const divisor = gcd(x, y);
+    const commonDivisor = gcd(Math.floor(a), Math.floor(b));
 
-    const first = x / divisor;
-    const second = y / divisor;
-
-    return `${first}/${second}`;
+    const ratioA = a / commonDivisor;
+    const ratioB = b / commonDivisor;
+  
+    return `${Math.floor(ratioA)}/${Math.floor(ratioB)}`;
 }

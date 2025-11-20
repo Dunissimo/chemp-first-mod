@@ -11,12 +11,15 @@ import type { StackingApi } from "../api/Stacking";
 import type { Signer } from "ethers";
 import type { BrowserProvider } from "ethers";
 import type { BigNumberish } from "ethers";
+import type { FormEvent } from "react";
 
 export type TContract = ERC20 | Pool | Stacking | Factory;
 export type TConnect = (address: string, runner?: ContractRunner | null | undefined) => TContract;
 export type TApi = typeof ERC20Api | typeof PoolApi | typeof FactoryApi | typeof StackingApi;
 export type TApiInstance = ERC20Api | PoolApi | FactoryApi | StackingApi;
 export type SignerOrProvider = Signer | BrowserProvider | null;
+
+export type HandleSubmitFunction = (e: FormEvent<HTMLFormElement>, poolApi?: PoolApi, pool?: IPool) => Promise<void>;
 
 export interface IPool {
     firstToken: {

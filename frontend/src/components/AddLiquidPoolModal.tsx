@@ -1,48 +1,22 @@
 import { useApi } from "../hooks/useApi";
-import {  } from "../conf.json";
 import Modal from "./Modal";
-import { useBalance } from "../hooks/useBalance";
-import { type FormEvent } from "react";
-import { ethers } from "ethers";
-import type { IPool } from "../utils/types";
+import type { HandleSubmitFunction, IPool } from "../utils/types";
 import { PoolApi } from "../api/Pool";
 
 interface IAddLiquidPoolModalProps {
     pool: IPool;
     addOpen: boolean;
     closeModal: () => void;
+    handleSubmit: HandleSubmitFunction;
 }
 
-function AddLiquidPoolModal({ pool, addOpen, closeModal }: IAddLiquidPoolModalProps) {
+function AddLiquidPoolModal({ pool, addOpen, handleSubmit, closeModal }: IAddLiquidPoolModalProps) {
     const poolApi = useApi<PoolApi>(pool.address, PoolApi);
-    const {updateBalance} = useBalance();
-    
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        const formData = new FormData(e.currentTarget);
-        const firstAmount = formData.get('firstTokenAmount') || "";
-        const secondAmount = formData.get('secondTokenAmount') || "";
-        
-        try {
-            const tx = await poolApi?.addLiquid(
-                ethers.parseUnits(firstAmount.toString(), 12),
-                ethers.parseUnits(secondAmount.toString(), 12),
-            );
-
-            await tx?.wait();
-            
-            updateBalance();
-            closeModal();
-        } catch (error) {
-            alert(error);
-        }
-    }
 
     return (
         <Modal open={addOpen} closeModal={closeModal} className="create-modal" title={<h2>Add liquidity to pool</h2>}>
             <div className="create-pool">
-                <form className="create-pool-form" onSubmit={handleSubmit}>
+                <form className="create-pool-form" onSubmit={(e) => handleSubmit(e, poolApi)}>
                     <label className="create-pool-label" htmlFor="first-token">
                         First token: 
                         <select name="firstToken" id="first-token" required disabled>

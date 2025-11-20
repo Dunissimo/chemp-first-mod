@@ -10,24 +10,37 @@ contract Stacking {
 
     uint256 public constant REWARD_PER_SECOND = 13;
     address private lpAddress;
-    address private factoryAddress;
+    uint256 private allLP;
 
     mapping(address => uint256) public balances;
     mapping(address => uint256) private lastRewardTime;
 
-    constructor(address _lpAddress, address _factoryAddress) {
+    constructor(address _lpAddress) {
+        allLP = 0;
         lpAddress = _lpAddress;
-        factoryAddress = _factoryAddress;
     }
 
     function getLastRewardTime() external view returns (uint256) {
         return lastRewardTime[msg.sender];
     }
 
-    function stack(uint256 amount) external {
+    function getUserCountLp() external view returns (uint256) {
+        return balances[msg.sender];
+    }
+
+    function stack(uint256 amount) external returns (uint256) {
+        require(amount > 0, "Invalid amount");
+
         IERC20(lpAddress).transferFrom(msg.sender, address(this), amount);
+
+        if (balances[msg.sender] == 0) {
+            lastRewardTime[msg.sender] = block.timestamp;
+        }
+
         balances[msg.sender] += amount;
-        lastRewardTime[msg.sender] = block.timestamp;
+        allLP += amount;
+
+        return block.timestamp;
     }
 
     function withdraw(uint256 amount) external {
@@ -35,11 +48,14 @@ contract Stacking {
 
         IERC20(lpAddress).transfer(msg.sender, amount);
         balances[msg.sender] -= amount;
-        lastRewardTime[msg.sender] = block.timestamp;
+     
+        allLP -= amount;
     }
 
+    // TODO: разобраться со Stacking, проблемы со временем (возможно)
+
     function claimReward() external {
-        uint256 rw = calculateReward();
+        uint256 rw = _calculateReward();
         require(rw > 0, "Invalid reward");
 
         ERC20(lpAddress).mint(msg.sender, rw);
@@ -48,21 +64,30 @@ contract Stacking {
         emit RewardTaken(msg.sender, rw);
     }
 
-    function calculateReward() public returns (uint256) {
-        uint256 lpCount = balances[msg.sender];
-        uint256 allLp = IERC20(lpAddress).totalSupply();
+    function calculateReward() external view returns (uint256) {
+        return _calculateReward();
+    }
+
+    function _calculateReward() private view returns (uint256) {
+        uint256 countLP = balances[msg.sender];
+        if (countLP == 0) return 0;
+
         uint256 _lastRewardTime = lastRewardTime[msg.sender];
+        if (_lastRewardTime == 0) return 0;
+
         uint256 timeStacked = block.timestamp - _lastRewardTime;
+        if (timeStacked == 0) return 0;
 
-        if (timeStacked == 0) return 0; 
+        uint256 SCALE = 1e18;
 
-        uint256 t1 = lpCount * timeStacked * REWARD_PER_SECOND;
-        require(t1 != 0, "Bad calculation in calculateReward with t1");
+        uint256 baseReward = countLP * timeStacked * REWARD_PER_SECOND;
 
-        uint256 t2 = t1 * (lpCount * 1e12 / allLp + 1e12) / 1e12;
-        require(t2 != 0, "Bad calculation in calculateReward with t2");
-    
-        uint256 rw = t2 * ((timeStacked / 30 days) * 5) / 100 + 1;
+        uint256 fraction = (countLP * SCALE) / (allLP == 0 ? 1 : allLP);
+        uint256 t2 = (baseReward * (fraction + SCALE)) / SCALE;
+
+        uint256 bonus = (timeStacked * 5 * SCALE) / (1 days * 100); 
+
+        uint256 rw = (t2 * (bonus + SCALE)) / SCALE;
 
         return rw;
     }

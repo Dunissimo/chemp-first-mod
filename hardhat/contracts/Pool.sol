@@ -12,7 +12,6 @@ contract Pool {
     address public firstToken;
     address public secondToken;
     uint256 public lpTotalSupply;
-    uint256 constant DECIMALS = 1e12;
 
     constructor(address _firstToken, address _secondToken, string memory _name, address _owner, address _lpAddress) {
         owner = _owner;
@@ -36,26 +35,23 @@ contract Pool {
         require(isTokenInPool(tokenOut), "TokenOut is not valid");
         require(amountIn > 0, "Amount must be > 0");
 
-        uint256 allowance = IERC20(tokenIn).allowance(msg.sender, address(this));
-        require(allowance >= amountIn, "Allowance is less than amount");
+        // uint256 allowance = IERC20(tokenIn).allowance(msg.sender, address(this));
+        // require(allowance >= amountIn, "Allowance is less than amount");
         
-        uint256 inPrice = IERC20(tokenIn).getBasePrice();
-        uint256 outPrice = IERC20(tokenOut).getBasePrice();
+        uint256 reserveIn  = reserves[tokenIn];
+        uint256 reserveOut = reserves[tokenOut];
+        uint256 amountOut = amountIn * reserveOut / reserveIn;
 
-        uint256 k1 = reserves[tokenIn] * inPrice;
-        uint256 k2 = reserves[tokenOut] * outPrice;
-
-        uint256 amountOut = (amountIn * inPrice * k2) / (outPrice * k1);
-        require(amountOut > 0, "AmountOut must be > 0");
+        require(amountOut > 0, "Amount out must be > 0");
+        require(reserveOut >= amountOut, "Not enough liquidity");
 
         IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn);
         IERC20(tokenOut).transfer(msg.sender, amountOut);
 
-        reserves[tokenIn] += amountIn;
-        reserves[tokenOut] -= amountOut;
+        reserves[tokenIn]  = reserveIn  + amountIn;
+        reserves[tokenOut] = reserveOut - amountOut;
     }
 
-    // TODO исправить addLiquid, убрать overflow
     function addLiquid(uint256 amountFirst, uint256 amountSecond) external {
         _addLiquidFrom(amountFirst, amountSecond, msg.sender);
     }

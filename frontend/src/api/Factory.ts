@@ -90,4 +90,12 @@ export class FactoryApi extends BaseApi<Factory> {
 
         return pools.filter((pool) => ethers.getAddress(pool.owner) === ethers.getAddress(userAddress));
     }
+
+    async getNoUserPools(signer : JsonRpcSigner, pools: IPool[]) {
+        const userAddress = await signer?.getAddress();
+
+        if (!userAddress) throw new Error('Got no user address');
+
+        return pools.filter((pool) => ethers.getAddress(pool.owner) !== ethers.getAddress(userAddress));
+    }
 }

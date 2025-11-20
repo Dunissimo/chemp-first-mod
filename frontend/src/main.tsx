@@ -6,12 +6,15 @@ import { RouterProvider } from 'react-router';
 import './index.css';
 import { AuthContextProvider } from './context/AuthContext.tsx';
 import { BalanceContextProvider } from './context/BalanceContext.tsx';
+import { PoolsContextProvider } from './context/PoolsContext.tsx';
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <AuthContextProvider>
             <BalanceContextProvider>
-                <RouterProvider router={router} />
+                <PoolsContextProvider>
+                    <RouterProvider router={router} />
+                </PoolsContextProvider>
             </BalanceContextProvider>
         </AuthContextProvider>
     </StrictMode>,
