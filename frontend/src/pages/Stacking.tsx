@@ -5,9 +5,13 @@ import { useEffect, useState } from "react";
 import { useModal } from "../hooks/useModal";
 import StackTokensModal from "../components/StackTokensModal";
 import type { HandleSubmitFunction } from "../utils/types";
-import { formatUnits, parseUnits } from "ethers";
+import { ethers, formatUnits, parseUnits } from "ethers";
+import { useAuth } from "../hooks/useAuth";
+import { increaseTime } from "../utils/helpers";
+import { JsonRpcProvider } from "ethers";
 
 function Stacking() {
+    const {signer} = useAuth();
     const api = useApi(stackingAddress, StackingApi) as StackingApi;
     const {open: stackOpen, setOpen: setStackOpen} = useModal();
 
@@ -16,7 +20,7 @@ function Stacking() {
     const [lastRewardTime, setLastRewardTime] = useState<string | undefined>();
 
     const getData = async () => {
-        if (!api) return;
+        if (!api || !signer) return;
 
         const balance = await api.getUserCountLp();
         setBalance(formatUnits(balance, 12));
@@ -24,7 +28,7 @@ function Stacking() {
         const lastRewardTime = await api.getLastRewardTime();
         setLastRewardTime(formatUnits(lastRewardTime, 12));
         
-        const reward = await api.calculateReward();
+        const reward = await api.calculateReward(await signer?.getAddress());
         setCurrentReward(new Intl.NumberFormat("RU-ru").format(+formatUnits(reward, 12)));
     }
 
@@ -37,7 +41,7 @@ function Stacking() {
     };
 
     const handleStackSubmit: HandleSubmitFunction = async (e) => {
-        if (!api) return;
+        if (!api || !signer) return;
 
         e.preventDefault();
 
@@ -45,7 +49,7 @@ function Stacking() {
         const amount = formData.get('amount') || "";
 
         try {
-            const tx = await api.stack(parseUnits(amount.toString(), 12));
+            const tx = await api.stack(await signer.getAddress(), parseUnits(amount.toString(), 12));
 
             await tx?.wait();
 
@@ -57,10 +61,10 @@ function Stacking() {
     }
 
     const handleClaim = async () => {
-        if (!api) return;
+        if (!api || !signer) return;
 
         try {
-            const tx = await api.claimReward();
+            const tx = await api.claimReward(await signer.getAddress());
 
             await tx?.wait();
 
@@ -70,13 +74,29 @@ function Stacking() {
         }
     }
 
+    const handleStackStart = async () => {
+        if (!api || !signer) return;
+
+        try {
+            const tx = await api.setTimeStamp(await signer.getAddress());
+
+            await tx?.wait();
+
+            alert("Success");
+        } catch (error) {
+            alert(error);
+        }
+    }
+    
     useEffect(() => {
         const interval = setInterval(async () => {
-            if (!balance) return;
+            if (!balance || !signer) return;
 
-            const reward = await api.calculateReward();
+            const reward = await api.calculateReward(await signer.getAddress());
+            const res = new Intl.NumberFormat("RU-ru").format(+formatUnits(reward, 12));
+            console.log(res);
             
-            setCurrentReward(new Intl.NumberFormat("RU-ru").format(+formatUnits(reward, 12)));
+            setCurrentReward(res);
         }, 2500);
 
         return () => clearInterval(interval);
@@ -86,9 +106,10 @@ function Stacking() {
         <div className="stacking">
             <div>balance: {balance}</div>
             {balance ? <div>current reward: {currentReward}</div> : null}
-            <div>last reward time: {lastRewardTime ?? "null"}</div>
+            {Number(lastRewardTime) > 0 ? <div>last reward time: {new Date(Number(lastRewardTime)).toLocaleString()}</div> : null}
             
             <button className="button stack" onClick={handleStackOpen}>Stake tokens</button>
+            <button className="button stack" onClick={handleStackStart}>Start stacking</button>
             <button className="button warn" disabled={Boolean(!balance)}>Withdraw tokens</button>
             <button className="button" disabled={Boolean(!balance && !currentReward)} onClick={handleClaim}>Claim reward</button>
 

@@ -17,6 +17,10 @@ const config: HardhatUserConfig = {
         {privateKey: accKey4, balance: "10000000000000000000000"}
       ],
       chainId: 1338,
+      mining: {
+        auto: true,
+        interval: [1000, 5000]
+      }
     }
   }
 };

@@ -17,19 +17,23 @@ export class StackingApi extends BaseApi<Stacking> {
         return this.contract.getUserCountLp();
     }
 
-    async stack(amount: BigNumberish) {
-        return this.contract.stack(amount);
+    async setTimeStamp(user: string) {
+        return this.contract.startStacking(user);
+    }
+
+    async stack(user: string, amount: BigNumberish) {
+        return this.contract.stack(user, amount);
     }
     
-    async withdraw(amount: BigNumberish) {
-        return this.contract.withdraw(amount);
+    async withdraw(user: string, amount: BigNumberish) {
+        return this.contract.withdraw(user, amount);
     }
 
-    async claimReward() {
-        return this.contract.claimReward();
+    async claimReward(user: string) {
+        return this.contract.claimReward(user);
     }
 
-    async calculateReward() {
-        return this.contract.calculateReward();
+    async calculateReward(user: string) {
+        return this.contract.calculateReward(user);
     }
 }

@@ -28,66 +28,64 @@ contract Stacking {
         return balances[msg.sender];
     }
 
-    function stack(uint256 amount) external returns (uint256) {
+    function startStacking(address user) external {
+        lastRewardTime[user] = block.timestamp;
+    }
+
+    function stack(address user, uint256 amount) external returns (uint256) {
         require(amount > 0, "Invalid amount");
 
-        IERC20(lpAddress).transferFrom(msg.sender, address(this), amount);
+        IERC20(lpAddress).transferFrom(user, address(this), amount);
+        lastRewardTime[user] = block.timestamp;
 
-        if (balances[msg.sender] == 0) {
-            lastRewardTime[msg.sender] = block.timestamp;
-        }
-
-        balances[msg.sender] += amount;
+        balances[user] += amount;
         allLP += amount;
 
         return block.timestamp;
     }
 
-    function withdraw(uint256 amount) external {
-        require(balances[msg.sender] >= amount, "Not enough staked");
+    function withdraw(address user, uint256 amount) external {
+        require(balances[user] >= amount, "Not enough staked");
 
-        IERC20(lpAddress).transfer(msg.sender, amount);
-        balances[msg.sender] -= amount;
-     
+        _claimReward(user);
+        IERC20(lpAddress).transfer(user, amount);
+
+        balances[user] -= amount;
         allLP -= amount;
     }
 
     // TODO: разобраться со Stacking, проблемы со временем (возможно)
 
-    function claimReward() external {
-        uint256 rw = _calculateReward();
+    function claimReward(address user) external {
+        return _claimReward(user);
+    }
+
+    function _claimReward(address user) private {
+        uint256 rw = _calculateReward(user);
         require(rw > 0, "Invalid reward");
 
-        ERC20(lpAddress).mint(msg.sender, rw);
-        lastRewardTime[msg.sender] = block.timestamp;
+        ERC20(lpAddress).mint(user, rw);
+        lastRewardTime[user] = block.timestamp;
         
-        emit RewardTaken(msg.sender, rw);
+        emit RewardTaken(user, rw);
     }
 
-    function calculateReward() external view returns (uint256) {
-        return _calculateReward();
+    function calculateReward(address user) external view returns (uint256) {
+        return _calculateReward(user);
     }
 
-    function _calculateReward() private view returns (uint256) {
-        uint256 countLP = balances[msg.sender];
-        if (countLP == 0) return 0;
+    function _calculateReward(address user) private view returns (uint256) {
+        // uint256 countLP = balances[user];
+        // uint256 _lastRewardTime = lastRewardTime[user];
+        // uint256 timeStacked = block.timestamp - _lastRewardTime;
+        // uint256 SCALE = 1e18;
+        // uint256 baseReward = countLP * timeStacked * REWARD_PER_SECOND;
+        // uint256 fraction = (countLP * SCALE) / (allLP == 0 ? 1 : allLP);
+        // uint256 t2 = (baseReward * (fraction + SCALE)) / SCALE;
+        // uint256 bonus = (timeStacked * 5 * SCALE) / (1 days * 100); 
+        // uint256 rw = (t2 * (bonus + SCALE)) / SCALE;
 
-        uint256 _lastRewardTime = lastRewardTime[msg.sender];
-        if (_lastRewardTime == 0) return 0;
-
-        uint256 timeStacked = block.timestamp - _lastRewardTime;
-        if (timeStacked == 0) return 0;
-
-        uint256 SCALE = 1e18;
-
-        uint256 baseReward = countLP * timeStacked * REWARD_PER_SECOND;
-
-        uint256 fraction = (countLP * SCALE) / (allLP == 0 ? 1 : allLP);
-        uint256 t2 = (baseReward * (fraction + SCALE)) / SCALE;
-
-        uint256 bonus = (timeStacked * 5 * SCALE) / (1 days * 100); 
-
-        uint256 rw = (t2 * (bonus + SCALE)) / SCALE;
+        uint256 rw = balances[user] + ((block.timestamp - lastRewardTime[user]) * REWARD_PER_SECOND);
 
         return rw;
     }
