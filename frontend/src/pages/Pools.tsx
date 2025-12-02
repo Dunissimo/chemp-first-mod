@@ -8,12 +8,14 @@ import SwapTokensModal from "../components/SwapTokensModal";
 import { useBalance } from "../hooks/useBalance";
 import { parseUnits } from "ethers";
 import { usePools } from "../hooks/usePools";
+import SwapRouteTokensModal from "../components/SwapRouteTokensModal";
 
 function Pools() {
     const {isAuth} = useAuth();
     const {updateBalance} = useBalance();
     const {open: addOpen, setOpen: setAddOpen} = useModal();
     const {open: createOpen, setOpen: setCreateOpen} = useModal();
+    const {open: swapRouteOpen, setOpen: setSwapRouteOpen} = useModal();
     const {open: swapOpen, setOpen: setSwapOpen} = useModal();
     const {pools, selectedPool, userPools, setSelectedPool, updatePools} = usePools();
 
@@ -51,9 +53,9 @@ function Pools() {
     }
 
     const swapHandleSubmit: HandleSubmitFunction = async (e, poolApi, pool) => {
-        e.preventDefault();
+        if (!pool || !poolApi) return;
 
-        if (!pool) return;
+        e.preventDefault();
 
         const formData = new FormData(e.currentTarget);
         const amount = formData.get('amount') || "";
@@ -79,7 +81,27 @@ function Pools() {
         }
     }
 
-    const closeModal = (type: "create" | "add" | "swap") => {
+    const swapRouteHandleOpen = () => {
+        setSwapRouteOpen(true);
+    }
+
+    const swapRouteHandleSubmit: HandleSubmitFunction = async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.currentTarget);
+
+        const firstToken = formData.get('firstToken') || "";
+        const secondToken = formData.get('secondToken') || "";
+        const firstAmount = formData.get('firstTokenAmount') || "";
+        const secondAmount = formData.get('secondTokenAmount') || "";
+        console.log(firstToken, secondToken);
+                
+        if (firstToken === secondToken) {
+            return alert("Cannot swap same token");
+        }
+    }
+
+    const closeModal = (type: "create" | "add" | "swap" | "swap-route") => {
         switch (type) {
             case "create":
                 setCreateOpen(false);
@@ -93,15 +115,23 @@ function Pools() {
                 setSelectedPool(null);
                 setSwapOpen(false);
                 break;
+            case "swap-route":
+                setSwapRouteOpen(false);
+                break;
         }
     }
     
     return (
         <>
             {isAuth && (
-                <div className="add-pool">
-                    <button className='button' onClick={() => setCreateOpen(true)}>Create new pool</button>
-                </div>
+                <>
+                    <div className="add-pool">
+                        <button className='button' onClick={() => setCreateOpen(true)}>Create new pool</button>
+                    </div>
+                    <div className="add-pool stacking">
+                        <button className='button stack' onClick={swapRouteHandleOpen}>Swap tokens</button>
+                    </div>
+                </>
             )}
 
             <div className="pools">
@@ -134,6 +164,9 @@ function Pools() {
             
             {/* Swap tokens modal */}
             {selectedPool && <SwapTokensModal pool={selectedPool} swapOpen={swapOpen} handleSubmit={swapHandleSubmit} closeModal={() => closeModal("swap")} />}
+            
+            {/* Swap with routing tokens modal */}
+            <SwapRouteTokensModal swapOpen={swapRouteOpen} handleSubmit={swapRouteHandleSubmit} closeModal={() => closeModal("swap-route")} />
         </>
     );
 }

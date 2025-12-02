@@ -75,8 +75,8 @@ function CreatePoolModal({ createOpen, closeModal }: ICreatePoolModalProps) {
                         Second token: 
                         <select name="secondToken" id="second-token" required>
                             <option value="" selected disabled>Выбрать токен</option>
-                            <option value="gerda">GERDA</option>
-                            <option value="krendel">KRENDEL</option>
+                            <option value="GERDA">GERDA</option>
+                            <option value="KRENDEL">KRENDEL</option>
                             <option value="RTK">RTK</option>
                         </select>
                     </label>

@@ -9,10 +9,6 @@ export class StackingApi extends BaseApi<Stacking> {
         super(_address, Stacking__factory.connect, signer);
     }
     
-    async getLastRewardTime() {
-        return this.contract.getLastRewardTime();
-    }
-    
     async getUserCountLp() {
         return this.contract.getUserCountLp();
     }
@@ -31,9 +27,5 @@ export class StackingApi extends BaseApi<Stacking> {
 
     async claimReward(user: string) {
         return this.contract.claimReward(user);
-    }
-
-    async calculateReward(user: string) {
-        return this.contract.calculateReward(user);
     }
 }

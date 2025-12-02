@@ -2,8 +2,7 @@
 pragma solidity ^0.8.0;
 
 interface IFactory {
-    function increaseLpCount(address user, uint256 amount) external;
-    function decreaseLpCount(address user, uint256 amount) external; 
-    function getLpCount(address user) external view returns (uint256);
-    function getAllLp() external view returns (uint256);
+    function createPool(address firstToken, address secondToken, string name, address owner) public returns (address);
+    function createPoolWithLiquidity(address firstToken, address secondToken, string name, address owner, uint256 amountFirst, uint256 amountSecond) external;
+    function getPools() external view returns (address[]);
 }

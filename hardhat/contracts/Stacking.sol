@@ -54,8 +54,6 @@ contract Stacking {
         allLP -= amount;
     }
 
-    // TODO: разобраться со Stacking, проблемы со временем (возможно)
-
     function claimReward(address user) external {
         return _claimReward(user);
     }
@@ -74,19 +72,27 @@ contract Stacking {
         return _calculateReward(user);
     }
 
+    // function _calculateReward(address user) private view returns (uint256) {
+    //     uint256 countLP = balances[user];
+    //     uint256 _lastRewardTime = lastRewardTime[user];
+    //     uint256 timeStacked = block.timestamp - _lastRewardTime;
+    //     uint256 SCALE = 1e18;
+    //     uint256 baseReward = countLP * timeStacked * REWARD_PER_SECOND;
+    //     uint256 fraction = (countLP * SCALE) / (allLP == 0 ? 1 : allLP);
+    //     uint256 t2 = (baseReward * (fraction + SCALE)) / SCALE;
+    //     uint256 bonus = (timeStacked * 5) / (1 days * 100); 
+    //     uint256 rw = (t2 * (bonus + SCALE)) / SCALE;
+
+    //     return rw;
+    // }
+
     function _calculateReward(address user) private view returns (uint256) {
-        // uint256 countLP = balances[user];
-        // uint256 _lastRewardTime = lastRewardTime[user];
-        // uint256 timeStacked = block.timestamp - _lastRewardTime;
-        // uint256 SCALE = 1e18;
-        // uint256 baseReward = countLP * timeStacked * REWARD_PER_SECOND;
-        // uint256 fraction = (countLP * SCALE) / (allLP == 0 ? 1 : allLP);
-        // uint256 t2 = (baseReward * (fraction + SCALE)) / SCALE;
-        // uint256 bonus = (timeStacked * 5 * SCALE) / (1 days * 100); 
-        // uint256 rw = (t2 * (bonus + SCALE)) / SCALE;
+    uint256 countLP = balances[user];
+    uint256 _lastRewardTime = lastRewardTime[user];
+    uint256 timeStacked = block.timestamp - _lastRewardTime;
 
-        uint256 rw = balances[user] + ((block.timestamp - lastRewardTime[user]) * REWARD_PER_SECOND);
+    uint256 reward = countLP * timeStacked * 1;
 
-        return rw;
-    }
+    return reward;
+}
 }

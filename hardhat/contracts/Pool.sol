@@ -100,25 +100,7 @@ contract Pool {
         IERC20(secondToken).transfer(msg.sender, amountSecond);
     }
 
-    function isTokenInPool(address token) private view returns (bool) {
+    function isTokenInPool(address token) external view returns (bool) {
         return token == firstToken || token == secondToken;
-    }
-
-    function sqrt(uint256 x) internal pure returns (uint256) {
-        if (x == 0) return 0;
-
-        uint256 z = (x + 1) / 2;
-        uint256 y = x;
-
-        while (z < y) {
-            y = z;
-            z = (x / z + z) / 2;
-        }
-
-        return y;
-    }
-
-    function min(uint x, uint y) internal pure returns (uint) {
-        return x < y ? x : y;
     }
 }
